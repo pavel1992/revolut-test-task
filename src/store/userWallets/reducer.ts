@@ -1,4 +1,5 @@
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
+import { roundToTwoDecimals } from '../../utils/roundToTwoDecimals';
 
 import { exchangeMoneyAction } from "./actions";
 import { MoneyExchangePayload, UserWalletModel } from "./model";
@@ -21,8 +22,8 @@ const handleExchangeMoneyAction = (state: UserWalletModel, payload: MoneyExchang
     return state;
   }
 
-  const newSoldCurrencyAmount = state.userWalletsBalance[payload.sellingCurrency] - payload.soldCurrencyAmount;
-  const newBoughtCurrencyAmount = state.userWalletsBalance[payload.buyingCurrency] + payload.boughtCurrencyAmount;
+  const newSoldCurrencyAmount = roundToTwoDecimals(state.userWalletsBalance[payload.sellingCurrency] - payload.soldCurrencyAmount);
+  const newBoughtCurrencyAmount = roundToTwoDecimals(state.userWalletsBalance[payload.buyingCurrency] + payload.boughtCurrencyAmount);
   return {
     ...state,
     userWalletsBalance: {

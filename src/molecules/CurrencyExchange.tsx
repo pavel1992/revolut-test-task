@@ -8,7 +8,7 @@ export interface CurrencyExchangeViewProps {
   buyingCurrency: string;
   userWalletAmount: number;
   exchangeRate: number;
-  amountToExchange: number;
+  amountToExchange: number | string;
 }
 
 export interface CurrencyExchangeProps extends CurrencyContainerProps, CurrencyExchangeViewProps {

@@ -11,9 +11,15 @@ describe('test roundToTwoDecimals', () => {
     expect(roundToTwoDecimals(testNumber)).toEqual(testNumber);
   });
 
-  it('should correctly round number with more than 2 decimals', () => {
+  it('should correctly round number with more than 2 decimals down', () => {
     const testNumber = 1.15234;
     const expectedResult = 1.15;
+    expect(roundToTwoDecimals(testNumber)).toEqual(expectedResult);
+  });
+
+  it('should correctly round number with more than 2 decimals up', () => {
+    const testNumber = 1.15634;
+    const expectedResult = 1.16;
     expect(roundToTwoDecimals(testNumber)).toEqual(expectedResult);
   });
 });
