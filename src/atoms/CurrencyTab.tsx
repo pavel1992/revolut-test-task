@@ -22,3 +22,5 @@ export const CurrencyTab = styled.div<CurrencyTabProps>`
     border-left: 2px solid ${props => props.active ? colors.pink : 'transparent'};
   }
 `;
+
+CurrencyTab.displayName = 'CurrencyTab';

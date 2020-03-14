@@ -25,6 +25,7 @@ const renderTabs = (props: CurrencyTabsProps) => props.tabNames.map(name => {
             key={name}
             active={name === props.activeTabName}
             onClick={onClick}
+            id={`tab-${name}`}
         >
             {name}
         </CurrencyTab>
