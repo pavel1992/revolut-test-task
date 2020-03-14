@@ -1,4 +1,4 @@
-import { roundToTwoDecimals } from "./roundToTwoDecimals";
+import { roundToDecimals } from "./roundToDecimals";
 
 /**
  * This function converts any amount of money from one currency to another through base currency
@@ -8,5 +8,5 @@ import { roundToTwoDecimals } from "./roundToTwoDecimals";
  *  what means you want to buy base currency
  */
 export const convertMoney = (amount: number, courseToBaseCurrencySelling: number, courseToBaseCurrencyBuying: number = 1): number => {
-  return roundToTwoDecimals(amount * courseToBaseCurrencySelling / courseToBaseCurrencyBuying);
+  return roundToDecimals(amount * courseToBaseCurrencySelling / courseToBaseCurrencyBuying);
 };

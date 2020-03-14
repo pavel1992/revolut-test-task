@@ -7,7 +7,7 @@ export const Input = styled.input`
     line-height: 98px;
     color: ${colors.black};
     border: none;
-    max-width: 300px;
+    max-width: 230px;
     &:focus {
         outline: none;
     }
@@ -15,6 +15,7 @@ export const Input = styled.input`
     @media(max-width: 768px) {
         font-size: 64px;
         line-height: 87px;
+        max-width: 170px;
     }
 `;
 

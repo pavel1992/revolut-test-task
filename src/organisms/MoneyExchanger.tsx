@@ -1,7 +1,8 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ExchangeButton } from '../atoms/ExchangeButton';
+import styled from 'styled-components';
 
+import { ExchangeButton } from '../atoms/ExchangeButton';
 import { POLLING_INTERVAL_MS } from '../constants';
 import { CurrencyExchange, CurrencyExchangeViewProps } from '../molecules/CurrencyExchange';
 import { fetchExchangeRateAction } from '../store/exchangeRate/actions';
@@ -9,14 +10,54 @@ import { StoreState } from '../store/store';
 import { exchangeMoneyAction } from '../store/userWallets/actions';
 import { getExchangeRate } from '../utils/getExchangeRate';
 import { isNumberWithTwoDecimal } from '../utils/isNumberWithTwoDecimal';
-import { roundToTwoDecimals } from '../utils/roundToTwoDecimals';
+import { roundToDecimals } from '../utils/roundToDecimals';
 
-export type CurrencyExchangerState = Pick<CurrencyExchangeViewProps, 'sellingCurrency' | 'buyingCurrency' | 'amountToExchange'>
+export type CurrencyExchangerState = Pick<CurrencyExchangeViewProps, 'amountToExchange'>
+
+export interface TabsState {
+  sellingCurrency: string;
+  buyingCurrency: string;
+}
 
 enum OperationType {
   BUY = 'BUY',
   SELL = 'SELL',
 }
+
+const MoneyExchangerContainer = styled.div`
+  width: 1160px;
+  display: flex;
+  flex-direction: column;
+
+  @media(max-width: 1280px) {
+    width: 100%;
+    padding: 0 60px;
+  }
+
+  @media(max-width: 768px) {
+    padding: 0;
+  }
+`;
+
+const ButtonsRow = styled.div`
+  display: flex;
+  flex-direction: row-reverse;
+  margin: 24px 0;
+
+  @media(max-width: 768px) {
+    margin-bottom: 0;
+  }
+`;
+
+const ExchangersContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+
+  @media(max-width: 768px) {
+    flex-direction: column;
+  }
+`;
 
 const handleAmountChange = (
   changingCurrencyStateChangeDispatcher: Dispatch<SetStateAction<CurrencyExchangerState>>,
@@ -25,39 +66,44 @@ const handleAmountChange = (
   conversionRate: number,
   exchangeMaxAmount: number,
 ) => (amount: string): void => {
-  if (amount === '') {
-    changingCurrencyStateChangeDispatcher(state => ({ ...state, amountToExchange: amount }));
+  const checkingAmount = amount.replace(',', '.');
+  if (checkingAmount === '') {
+    changingCurrencyStateChangeDispatcher(state => ({ ...state, amountToExchange: checkingAmount }));
     return;
   }
 
   // checking for 2. or 2, inputs
-  if ((amount.endsWith(',') || amount.endsWith('.')) && isNumberWithTwoDecimal(amount.slice(0, amount.length - 1))) {
-    changingCurrencyStateChangeDispatcher(state => ({ ...state, amountToExchange: amount.replace(',', '.') }));
+  if (
+      checkingAmount.endsWith('.')
+      && checkingAmount.split('.').length === 2
+      && isNumberWithTwoDecimal(checkingAmount.slice(0, checkingAmount.length - 1))
+  ) {
+    changingCurrencyStateChangeDispatcher(state => ({ ...state, amountToExchange: checkingAmount }));
     return;
   }
 
   // checking for 2.0 etc inputs
-  if (amount.split('.').length > 1 && amount.split('.')[1].length < 2 && amount.split('.')[1] === '0') {
-    changingCurrencyStateChangeDispatcher(state => ({ ...state, amountToExchange: amount }));
+  if (checkingAmount.split('.').length > 1 && checkingAmount.split('.')[1].length < 2 && checkingAmount.split('.')[1] === '0') {
+    changingCurrencyStateChangeDispatcher(state => ({ ...state, amountToExchange: checkingAmount }));
     return;
   }
 
   // checking for non-numeric input or third decimal
-  if (!isNumberWithTwoDecimal(amount) || (amount.split('.').length > 1 && amount.split('.')[1].length > 2)) {
+  if (!isNumberWithTwoDecimal(checkingAmount) || (checkingAmount.split('.').length > 1 && checkingAmount.split('.')[1].length > 2)) {
     return;
   }
 
-  const dependedNewAmount = roundToTwoDecimals(Number(amount) * conversionRate);
+  const dependedNewAmount = roundToDecimals(Number(checkingAmount) * conversionRate);
 
   if (operationType === OperationType.BUY && dependedNewAmount > exchangeMaxAmount ) {
     return;
   }
 
-  if (operationType === OperationType.SELL && Number(amount) > exchangeMaxAmount ) {
+  if (operationType === OperationType.SELL && Number(checkingAmount) > exchangeMaxAmount ) {
     return;
   }
 
-  changingCurrencyStateChangeDispatcher(state => ({ ...state, amountToExchange: roundToTwoDecimals(Number(amount)) }));
+  changingCurrencyStateChangeDispatcher(state => ({ ...state, amountToExchange: roundToDecimals(Number(checkingAmount)) }));
   dependedCurrencyStateChangeDispatcher(state => ({ ...state, amountToExchange: dependedNewAmount }));
 };
 
@@ -82,31 +128,42 @@ export const MoneyExchanger = React.memo(() => {
   });
 
 
-  const initialExchangersState: CurrencyExchangerState = ({
+  const initialTabsState = ({
     buyingCurrency: userWalletCurrencies[1],
     sellingCurrency: userWalletCurrencies[0],
-    amountToExchange: '',
   });
 
-  const buyExchangeRate = getExchangeRate(
-    exchangeRateToBaseCurrency[userWalletCurrencies[0]],
-    exchangeRateToBaseCurrency[userWalletCurrencies[1]],
-  );
-
-  const sellExchangeRate = getExchangeRate(
-    exchangeRateToBaseCurrency[userWalletCurrencies[1]],
-    exchangeRateToBaseCurrency[userWalletCurrencies[0]],
-  );
+  const initialExchangersState: CurrencyExchangerState = ({
+    amountToExchange: '',
+  });
   const [sellExchangerState, setSellExchangerState] = useState<CurrencyExchangerState>(initialExchangersState);
 
   const [buyExchangerState, setBuyExchangerState] = useState<CurrencyExchangerState>(initialExchangersState);
+
+  const [tabsState, setTabsState] = useState<TabsState>(initialTabsState);
+
+  const buyExchangeRate = roundToDecimals(
+      getExchangeRate(
+        exchangeRateToBaseCurrency[tabsState.sellingCurrency],
+        exchangeRateToBaseCurrency[tabsState.buyingCurrency],
+      ),
+      4,
+  );
+
+  const sellExchangeRate = roundToDecimals(
+      getExchangeRate(
+        exchangeRateToBaseCurrency[tabsState.buyingCurrency],
+        exchangeRateToBaseCurrency[tabsState.sellingCurrency],
+      ),
+      4,
+  );
 
   const sellingAmountChangeHandler = handleAmountChange(
     setSellExchangerState,
     setBuyExchangerState,
     OperationType.SELL,
     sellExchangeRate,
-    userWalletsBalance[sellExchangerState.sellingCurrency],
+    userWalletsBalance[tabsState.sellingCurrency],
   );
 
   const buyingAmountChangeHandler = handleAmountChange(
@@ -114,7 +171,7 @@ export const MoneyExchanger = React.memo(() => {
     setSellExchangerState,
     OperationType.BUY,
     buyExchangeRate,
-    userWalletsBalance[sellExchangerState.sellingCurrency],
+    userWalletsBalance[tabsState.sellingCurrency],
   );
 
   if (userWalletCurrencies.length < 2) {
@@ -128,15 +185,26 @@ export const MoneyExchanger = React.memo(() => {
     return <div>Couldn't get exchange rates for exchange</div>
   }
 
+
   const reset = () => {
     setSellExchangerState(state => ({...state, amountToExchange: ''}));
     setBuyExchangerState(state => ({ ...state, amountToExchange: ''}));
   };
 
+
+  const changeSellingTab = (val: string): void => {
+    setTabsState(state => ({...state, sellingCurrency: val}));
+    reset();
+  };
+  const changeBuyingTab = (val: string): void => {
+    setTabsState(state => ({...state, buyingCurrency: val}));
+    reset();
+  };
+
   const makeExchange = () => {
     dispatch(exchangeMoneyAction({
-      sellingCurrency: sellExchangerState.sellingCurrency,
-      buyingCurrency: sellExchangerState.buyingCurrency,
+      sellingCurrency: tabsState.sellingCurrency,
+      buyingCurrency: tabsState.buyingCurrency,
       soldCurrencyAmount: Number(sellExchangerState.amountToExchange),
       boughtCurrencyAmount: Number(buyExchangerState.amountToExchange),
     }));
@@ -144,25 +212,33 @@ export const MoneyExchanger = React.memo(() => {
   };
 
   return (
-    <div>
-      <div>
+    <MoneyExchangerContainer>
+      <ButtonsRow>
         <ExchangeButton onClick={makeExchange}>EXCHANGE</ExchangeButton>
-      </div>
-      <div>
+      </ButtonsRow>
+      <ExchangersContainer>
         <CurrencyExchange
           {...sellExchangerState}
-          userWalletAmount={userWalletsBalance[sellExchangerState.sellingCurrency]}
+          {...tabsState}
+          tabNames={userWalletCurrencies}
+          activeTabName={tabsState.sellingCurrency}
+          onTabClick={changeSellingTab}
+          userWalletAmount={userWalletsBalance[tabsState.sellingCurrency]}
           onAmountChange={sellingAmountChangeHandler}
           exchangeRate={sellExchangeRate}
           isFromCurrency={true}
         />
         <CurrencyExchange
+          {...tabsState}
           {...buyExchangerState}
-          userWalletAmount={userWalletsBalance[buyExchangerState.buyingCurrency]}
+          tabNames={userWalletCurrencies}
+          onTabClick={changeBuyingTab}
+          activeTabName={tabsState.buyingCurrency}
+          userWalletAmount={userWalletsBalance[tabsState.buyingCurrency]}
           exchangeRate={buyExchangeRate}
           onAmountChange={buyingAmountChangeHandler}
         />
-      </div>
-    </div>
+      </ExchangersContainer>
+    </MoneyExchangerContainer>
   )}
-  );
+);

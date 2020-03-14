@@ -1,14 +1,13 @@
 import React from 'react';
+import styled from 'styled-components';
 
-import { ArrowDown } from "../atoms/ArrowDown";
 import { Caption } from '../atoms/Caption';
-import { CurrencyContainer, CurrencyContainerProps } from "../atoms/CurrencyContainer";
+import { CurrencyContainer, CurrencyContainerProps } from '../atoms/CurrencyContainer';
 import { Input } from '../atoms/Input';
 import { InputHelper } from '../atoms/InputHelper';
 import { CURRENCY_SIGNS } from '../constants';
-import { isNumberWithTwoDecimal } from '../utils/isNumberWithTwoDecimal';
 
-import { CurrencyTabs } from './CurrencyTabs';
+import { CurrencyTabs, CurrencyTabsProps } from './CurrencyTabs';
 
 export interface CurrencyExchangeViewProps {
   sellingCurrency: string;
@@ -18,9 +17,17 @@ export interface CurrencyExchangeViewProps {
   amountToExchange: number | string;
 }
 
-export interface CurrencyExchangeProps extends CurrencyContainerProps, CurrencyExchangeViewProps {
+export interface CurrencyExchangeProps extends CurrencyContainerProps, CurrencyExchangeViewProps, CurrencyTabsProps {
   onAmountChange: (value: string) => void;
 }
+
+const InputWithInfoContainer = styled.div`
+  margin-top: 30px;
+
+  @media(max-width: 768px) {
+    margin-top: 0;
+  }
+`;
 
 const getCurrencyHelperText = (
     {sellingCurrency, buyingCurrency, exchangeRate, isFromCurrency}: CurrencyExchangeProps,
@@ -37,11 +44,8 @@ const getUserWalletInfoText = (
 const getInputHelperText = (
     { buyingCurrency, sellingCurrency, isFromCurrency }: CurrencyExchangeProps
 ): string => isFromCurrency
-    ? `-${CURRENCY_SIGNS[sellingCurrency] || sellingCurrency}`
-    : `+${CURRENCY_SIGNS[buyingCurrency] || buyingCurrency}`;
-
-const showExchangeHelper = (amountToExchange: string | number): boolean =>
-    isNumberWithTwoDecimal(amountToExchange.toString()) && Number(amountToExchange) !== 0;
+    ? `${CURRENCY_SIGNS[sellingCurrency] || sellingCurrency}`
+    : `${CURRENCY_SIGNS[buyingCurrency] || buyingCurrency}`;
 
 export const CurrencyExchange = (props: CurrencyExchangeProps) => {
     const onAmountChange = (e: React.FormEvent<HTMLInputElement>): void => {
@@ -50,14 +54,19 @@ export const CurrencyExchange = (props: CurrencyExchangeProps) => {
 
     return (
         <CurrencyContainer isFromCurrency={props.isFromCurrency}>
-            <CurrencyTabs/>
-            {props.isFromCurrency && <ArrowDown/>}
-            <Caption>{getCurrencyHelperText(props)}</Caption>
-            <div>
-                {showExchangeHelper(props.amountToExchange) && <InputHelper>{getInputHelperText(props)}</InputHelper>}
-                <Input value={props.amountToExchange} onChange={onAmountChange}/>
-            </div>
-            <Caption>{getUserWalletInfoText(props)}</Caption>
+            <CurrencyTabs
+                activeTabName={props.activeTabName}
+                tabNames={props.tabNames}
+                onTabClick={props.onTabClick}
+            />
+            <InputWithInfoContainer>
+                <Caption>{getCurrencyHelperText(props)}</Caption>
+                <div>
+                    <InputHelper>{getInputHelperText(props)}</InputHelper>
+                    <Input value={props.amountToExchange} onChange={onAmountChange}/>
+                </div>
+                <Caption>{getUserWalletInfoText(props)}</Caption>
+            </InputWithInfoContainer>
         </CurrencyContainer>
     )
 };
