@@ -5,8 +5,8 @@ import { CurrencyContainer } from "./CurrencyContainer";
 
 
 test('renders currency container correctly', () => {
-  const renderedApp = renderer
+  const render = renderer
     .create(<CurrencyContainer/>)
     .toJSON();
-  expect(renderedApp).toMatchSnapshot();
+  expect(render).toMatchSnapshot();
 });

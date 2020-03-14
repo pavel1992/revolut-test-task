@@ -6,9 +6,9 @@ import { MoneyExchanger } from "./organisms/MoneyExchanger";
 import { store } from "./store/store";
 
 export const App = () => (
-  <Provider store={store}>
-    <AppContainer>
-      <MoneyExchanger/>
-    </AppContainer>
-  </Provider>
+    <Provider store={store}>
+        <AppContainer>
+            <MoneyExchanger/>
+        </AppContainer>
+    </Provider>
 );

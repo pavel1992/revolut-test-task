@@ -20,7 +20,7 @@ describe('convertMoneyFunctionTest', () => {
   it('should correctly convert money to EUR with more than 2 decimals result', () => {
     const amount = 1;
     const sellingCurrencyRateToEur = 0.888;
-    const expectedResult = 0.88;
+    const expectedResult = 0.89;
     expect(convertMoney(amount, sellingCurrencyRateToEur)).toEqual(expectedResult);
   });
 

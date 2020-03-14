@@ -1,5 +1,6 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { ExchangeButton } from '../atoms/ExchangeButton';
 
 import { POLLING_INTERVAL_MS } from '../constants';
 import { CurrencyExchange, CurrencyExchangeViewProps } from '../molecules/CurrencyExchange';
@@ -143,22 +144,25 @@ export const MoneyExchanger = React.memo(() => {
   };
 
   return (
-    <>
-      <CurrencyExchange
-        {...sellExchangerState}
-        userWalletAmount={userWalletsBalance[sellExchangerState.sellingCurrency]}
-        onAmountChange={sellingAmountChangeHandler}
-        exchangeRate={sellExchangeRate}
-        isFromCurrency={true}
-      />
-      <CurrencyExchange
-        {...buyExchangerState}
-        userWalletAmount={userWalletsBalance[buyExchangerState.buyingCurrency]}
-        exchangeRate={buyExchangeRate}
-        onAmountChange={buyingAmountChangeHandler}
-      />
-      <button onClick={reset}>Reset</button>
-      <button onClick={makeExchange}>Exchange</button>
-    </>
+    <div>
+      <div>
+        <ExchangeButton onClick={makeExchange}>EXCHANGE</ExchangeButton>
+      </div>
+      <div>
+        <CurrencyExchange
+          {...sellExchangerState}
+          userWalletAmount={userWalletsBalance[sellExchangerState.sellingCurrency]}
+          onAmountChange={sellingAmountChangeHandler}
+          exchangeRate={sellExchangeRate}
+          isFromCurrency={true}
+        />
+        <CurrencyExchange
+          {...buyExchangerState}
+          userWalletAmount={userWalletsBalance[buyExchangerState.buyingCurrency]}
+          exchangeRate={buyExchangeRate}
+          onAmountChange={buyingAmountChangeHandler}
+        />
+      </div>
+    </div>
   )}
   );

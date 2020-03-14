@@ -7,9 +7,10 @@ export interface CurrencyContainerProps {
 }
 
 export const CurrencyContainer = styled.div<CurrencyContainerProps>`
-  background-color: ${(props: CurrencyContainerProps) => props.isFromCurrency ? colors.lightBlue : colors.darkBlue};
-  height: 100%;
   display: flex;
+  border: 1px solid ${colors.thinBorderWhite};
+  border-radius: 8px 0 0 8px;
   flex-direction: column;
   position: relative;
+  padding: 48px 0 54px 48px;
 `;

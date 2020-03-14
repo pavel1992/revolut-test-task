@@ -5,8 +5,8 @@ import { AppContainer } from "./AppСontainer";
 
 
 test('renders app container correctly', () => {
-  const renderedApp = renderer
+  const render = renderer
     .create(<AppContainer/>)
     .toJSON();
-  expect(renderedApp).toMatchSnapshot();
+  expect(render).toMatchSnapshot();
 });
