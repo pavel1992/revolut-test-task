@@ -5,8 +5,8 @@ import { Input } from './Input';
 
 
 test('renders Input correctly', () => {
-    const render = renderer
-        .create(<Input/>)
-        .toJSON();
-    expect(render).toMatchSnapshot();
+  const render = renderer
+    .create(<Input/>)
+    .toJSON();
+  expect(render).toMatchSnapshot();
 });

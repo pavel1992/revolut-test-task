@@ -5,8 +5,8 @@ import { Caption } from './Caption';
 
 
 test('renders Caption correctly', () => {
-    const render = renderer
-        .create(<Caption>111</Caption>)
-        .toJSON();
-    expect(render).toMatchSnapshot();
+  const render = renderer
+    .create(<Caption>111</Caption>)
+    .toJSON();
+  expect(render).toMatchSnapshot();
 });

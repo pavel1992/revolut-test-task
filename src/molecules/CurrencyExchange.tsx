@@ -6,6 +6,7 @@ import { CurrencyContainer, CurrencyContainerProps } from '../atoms/CurrencyCont
 import { Input } from '../atoms/Input';
 import { InputHelper } from '../atoms/InputHelper';
 import { CURRENCY_SIGNS } from '../constants';
+import { TABLET_BREAKPOINT } from '../styleConstants/mediaConstants';
 
 import { CurrencyTabs, CurrencyTabsProps } from './CurrencyTabs';
 
@@ -24,49 +25,49 @@ export interface CurrencyExchangeProps extends CurrencyContainerProps, CurrencyE
 const InputWithInfoContainer = styled.div`
   margin-top: 30px;
 
-  @media(max-width: 768px) {
+  @media(max-width: ${TABLET_BREAKPOINT}) {
     margin-top: 0;
   }
 `;
 
 const getCurrencyHelperText = (
-    {sellingCurrency, buyingCurrency, exchangeRate, isFromCurrency}: CurrencyExchangeProps,
+  {sellingCurrency, buyingCurrency, exchangeRate, isFromCurrency}: CurrencyExchangeProps,
 ): string => isFromCurrency
-    ? `${CURRENCY_SIGNS[sellingCurrency] || sellingCurrency}1 = ${CURRENCY_SIGNS[buyingCurrency] || buyingCurrency}${exchangeRate}`
-    : `${CURRENCY_SIGNS[buyingCurrency] || buyingCurrency}1 = ${CURRENCY_SIGNS[sellingCurrency] || sellingCurrency}${exchangeRate}`;
+  ? `${CURRENCY_SIGNS[sellingCurrency] || sellingCurrency}1 = ${CURRENCY_SIGNS[buyingCurrency] || buyingCurrency}${exchangeRate}`
+  : `${CURRENCY_SIGNS[buyingCurrency] || buyingCurrency}1 = ${CURRENCY_SIGNS[sellingCurrency] || sellingCurrency}${exchangeRate}`;
 
 const getUserWalletInfoText = (
-    { buyingCurrency, sellingCurrency, isFromCurrency, userWalletAmount }: CurrencyExchangeProps
+  { buyingCurrency, sellingCurrency, isFromCurrency, userWalletAmount }: CurrencyExchangeProps
 ): string => isFromCurrency
-    ? `You have ${CURRENCY_SIGNS[sellingCurrency] || sellingCurrency}${userWalletAmount}`
-    : `You have ${CURRENCY_SIGNS[buyingCurrency] || buyingCurrency}${userWalletAmount}`;
+  ? `You have ${CURRENCY_SIGNS[sellingCurrency] || sellingCurrency}${userWalletAmount}`
+  : `You have ${CURRENCY_SIGNS[buyingCurrency] || buyingCurrency}${userWalletAmount}`;
 
 const getInputHelperText = (
-    { buyingCurrency, sellingCurrency, isFromCurrency }: CurrencyExchangeProps
+  { buyingCurrency, sellingCurrency, isFromCurrency }: CurrencyExchangeProps
 ): string => isFromCurrency
-    ? `${CURRENCY_SIGNS[sellingCurrency] || sellingCurrency}`
-    : `${CURRENCY_SIGNS[buyingCurrency] || buyingCurrency}`;
+  ? `${CURRENCY_SIGNS[sellingCurrency] || sellingCurrency}`
+  : `${CURRENCY_SIGNS[buyingCurrency] || buyingCurrency}`;
 
 export const CurrencyExchange = (props: CurrencyExchangeProps) => {
-    const onAmountChange = (e: React.FormEvent<HTMLInputElement>): void => {
-        props.onAmountChange(e.currentTarget.value);
-    };
+  const onAmountChange = (e: React.FormEvent<HTMLInputElement>): void => {
+    props.onAmountChange(e.currentTarget.value);
+  };
 
-    return (
-        <CurrencyContainer isFromCurrency={props.isFromCurrency}>
-            <CurrencyTabs
-                activeTabName={props.activeTabName}
-                tabNames={props.tabNames}
-                onTabClick={props.onTabClick}
-            />
-            <InputWithInfoContainer>
-                <Caption>{getCurrencyHelperText(props)}</Caption>
-                <div>
-                    <InputHelper>{getInputHelperText(props)}</InputHelper>
-                    <Input value={props.amountToExchange} onChange={onAmountChange}/>
-                </div>
-                <Caption>{getUserWalletInfoText(props)}</Caption>
-            </InputWithInfoContainer>
-        </CurrencyContainer>
-    )
+  return (
+    <CurrencyContainer isFromCurrency={props.isFromCurrency}>
+      <CurrencyTabs
+        activeTabName={props.activeTabName}
+        tabNames={props.tabNames}
+        onTabClick={props.onTabClick}
+      />
+      <InputWithInfoContainer>
+        <Caption>{getCurrencyHelperText(props)}</Caption>
+        <div>
+          <InputHelper>{getInputHelperText(props)}</InputHelper>
+          <Input value={props.amountToExchange} onChange={onAmountChange}/>
+        </div>
+        <Caption>{getUserWalletInfoText(props)}</Caption>
+      </InputWithInfoContainer>
+    </CurrencyContainer>
+  )
 };

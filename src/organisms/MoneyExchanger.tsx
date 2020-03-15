@@ -9,6 +9,7 @@ import { CurrencyExchange, CurrencyExchangeViewProps } from '../molecules/Curren
 import { fetchExchangeRateAction } from '../store/exchangeRate/actions';
 import { StoreState } from '../store/store';
 import { exchangeMoneyAction } from '../store/userWallets/actions';
+import { SMALL_DESKTOP_BREAKPOINT, TABLET_BREAKPOINT } from '../styleConstants/mediaConstants';
 import { getExchangeRate } from '../utils/getExchangeRate';
 import { isNumberWithTwoDecimal } from '../utils/isNumberWithTwoDecimal';
 import { roundToDecimals } from '../utils/roundToDecimals';
@@ -30,12 +31,12 @@ const MoneyExchangerContainer = styled.div`
   display: flex;
   flex-direction: column;
 
-  @media(max-width: 1280px) {
+  @media(max-width: ${SMALL_DESKTOP_BREAKPOINT}) {
     width: 100%;
     padding: 0 60px;
   }
 
-  @media(max-width: 768px) {
+  @media(max-width: ${TABLET_BREAKPOINT}) {
     padding: 0;
   }
 `;
@@ -45,7 +46,7 @@ const ButtonsRow = styled.div`
   flex-direction: row-reverse;
   margin: 24px 0;
 
-  @media(max-width: 768px) {
+  @media(max-width: ${TABLET_BREAKPOINT}) {
     margin-bottom: 0;
   }
 `;
@@ -55,7 +56,7 @@ const ExchangersContainer = styled.div`
   flex-direction: row;
   width: 100%;
 
-  @media(max-width: 768px) {
+  @media(max-width: ${TABLET_BREAKPOINT}) {
     flex-direction: column;
   }
 `;
@@ -76,9 +77,9 @@ const handleAmountChange = (
 
   // checking for 2. or 2, inputs
   if (
-      checkingAmount.endsWith('.')
-      && checkingAmount.split('.').length === 2
-      && isNumberWithTwoDecimal(checkingAmount.slice(0, checkingAmount.length - 1))
+    checkingAmount.endsWith('.')
+    && checkingAmount.split('.').length === 2
+    && isNumberWithTwoDecimal(checkingAmount.slice(0, checkingAmount.length - 1))
   ) {
     changingCurrencyStateChangeDispatcher(state => ({ ...state, amountToExchange: checkingAmount }));
     return;
@@ -117,15 +118,15 @@ const handleAmountChange = (
 
 const isExchangeDisabled = (buyingState: CurrencyExchangerState, sellingState: CurrencyExchangerState): boolean => {
   return !isNumberWithTwoDecimal(
-      buyingState.amountToExchange.toString())
-      || !isNumberWithTwoDecimal(sellingState.amountToExchange.toString());
+    buyingState.amountToExchange.toString())
+    || !isNumberWithTwoDecimal(sellingState.amountToExchange.toString());
 };
 
 export const MoneyExchanger = React.memo(() => {
   const userWalletsBalance = useSelector<StoreState, Record<string, number>>(state => state.userWallets.userWalletsBalance);
   const userWalletCurrencies = useSelector<StoreState, string[]>(state => state.userWallets.userWalletCurrencies);
   const exchangeRateToBaseCurrency = useSelector<StoreState, Record<string, number>>(
-      state => state.exchangeRate.exchangeRateToBaseCurrency
+    state => state.exchangeRate.exchangeRateToBaseCurrency
   );
   const dispatch = useDispatch();
 
@@ -135,8 +136,8 @@ export const MoneyExchanger = React.memo(() => {
 
   useEffect(() => {
     const pollingRateInterval = setInterval(
-        () => dispatch(fetchExchangeRateAction()),
-        POLLING_INTERVAL_MS,
+      () => dispatch(fetchExchangeRateAction()),
+      POLLING_INTERVAL_MS,
     );
     return () => clearInterval(pollingRateInterval);
   });
@@ -159,19 +160,19 @@ export const MoneyExchanger = React.memo(() => {
   const [errorState, setErrorState] = useState<string>('');
 
   const buyExchangeRate = roundToDecimals(
-      getExchangeRate(
-        exchangeRateToBaseCurrency[tabsState.sellingCurrency],
-        exchangeRateToBaseCurrency[tabsState.buyingCurrency],
-      ),
-      4,
+    getExchangeRate(
+      exchangeRateToBaseCurrency[tabsState.sellingCurrency],
+      exchangeRateToBaseCurrency[tabsState.buyingCurrency],
+    ),
+    4,
   );
 
   const sellExchangeRate = roundToDecimals(
-      getExchangeRate(
-        exchangeRateToBaseCurrency[tabsState.buyingCurrency],
-        exchangeRateToBaseCurrency[tabsState.sellingCurrency],
-      ),
-      4,
+    getExchangeRate(
+      exchangeRateToBaseCurrency[tabsState.buyingCurrency],
+      exchangeRateToBaseCurrency[tabsState.sellingCurrency],
+    ),
+    4,
   );
 
   const sellingAmountChangeHandler = handleAmountChange(
@@ -233,8 +234,8 @@ export const MoneyExchanger = React.memo(() => {
     <MoneyExchangerContainer>
       <ButtonsRow>
         <ExchangeButton
-            disabled={Boolean(errorState) || isExchangeDisabled(buyExchangerState, sellExchangerState)}
-            onClick={makeExchange}
+          disabled={Boolean(errorState) || isExchangeDisabled(buyExchangerState, sellExchangerState)}
+          onClick={makeExchange}
         >
           EXCHANGE
         </ExchangeButton>

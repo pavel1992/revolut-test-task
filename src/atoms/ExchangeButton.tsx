@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { colors } from '../colors';
+import { colors } from '../styleConstants/colors';
 
 export const ExchangeButton = styled.button`
   padding: 14px 50px;

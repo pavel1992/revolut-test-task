@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components';
 
-import { colors } from "../colors";
+import { colors } from "../styleConstants/colors";
+import { TABLET_BREAKPOINT } from '../styleConstants/mediaConstants';
 
 export interface CurrencyContainerProps {
   isFromCurrency?: boolean;
@@ -16,7 +17,7 @@ export const CurrencyContainer = styled.div<CurrencyContainerProps>`
   padding: 48px 0 54px 48px;
   border-collapse: collapse;
 
-  @media(max-width: 768px) {
+  @media(max-width: ${TABLET_BREAKPOINT}) {
     border: none;
     flex-direction: row;
     justify-content: space-between;
@@ -59,7 +60,7 @@ export const CurrencyContainer = styled.div<CurrencyContainerProps>`
         margin-top: -16px;
       }
 
-      @media(max-width: 768px) {
+      @media(max-width: ${TABLET_BREAKPOINT}) {
         &:after, &:before {
           top: 100%;
           left: 50%;

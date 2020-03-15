@@ -5,8 +5,8 @@ import { ExchangeButton } from './ExchangeButton';
 
 
 test('renders ExchangeButton correctly', () => {
-    const render = renderer
-        .create(<ExchangeButton>111</ExchangeButton>)
-        .toJSON();
-    expect(render).toMatchSnapshot();
+  const render = renderer
+    .create(<ExchangeButton>111</ExchangeButton>)
+    .toJSON();
+  expect(render).toMatchSnapshot();
 });

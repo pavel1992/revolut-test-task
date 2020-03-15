@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
-import { colors } from '../colors';
+import { colors } from '../styleConstants/colors';
+import { TABLET_BREAKPOINT } from '../styleConstants/mediaConstants';
 
 export interface CurrencyTabProps {
     active: boolean;
@@ -14,7 +15,7 @@ export const CurrencyTab = styled.div<CurrencyTabProps>`
   border-bottom: 2px solid ${props => props.active ? colors.pink : 'transparent'};
   margin-right: 24px;
 
-  @media(max-width: 768px) {
+  @media(max-width: ${TABLET_BREAKPOINT}) {
     padding: 8px 0 8px 8px;
     margin-right: 0;
     margin-bottom: 4px;
