@@ -4,7 +4,9 @@ exports[`renders app correctly 1`] = `
 <div
   className="sc-AxjAm lkwWUj"
 >
-  <div>
+  <div
+    id="no-currency"
+  >
     Couldn't get exchange rates for exchange
   </div>
 </div>

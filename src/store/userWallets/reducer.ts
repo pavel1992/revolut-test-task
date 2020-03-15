@@ -1,4 +1,5 @@
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
+
 import { roundToDecimals } from '../../utils/roundToDecimals';
 
 import { exchangeMoneyAction } from "./actions";

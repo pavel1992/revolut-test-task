@@ -12,4 +12,13 @@ export const ExchangeButton = styled.button`
   &:focus {
       outline: none;
   }
+
+  &:hover {
+    background-color: ${colors.hoveredPink};
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    background-color: ${colors.disabledGray}
+  }
 `;

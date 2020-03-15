@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders Caption correctly 1`] = `
+<div
+  className="sc-AxjAm wjbyP"
+>
+  111
+</div>
+`;

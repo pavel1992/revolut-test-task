@@ -34,7 +34,10 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --coverage --updateSnapshot --watchAll=false",
+    "test": "react-scripts test",
+    "test-update-snapshots": "react-scripts test --coverage --updateSnapshot --watchAll=false",
+    "test-with-coverage": "react-scripts test --coverage --watchAll=false",
+    "lint": "tslint src/**/*.ts{,x}",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

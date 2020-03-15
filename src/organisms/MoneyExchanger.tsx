@@ -2,6 +2,7 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 
+import { ErrorDiv } from '../atoms/ErrorDiv';
 import { ExchangeButton } from '../atoms/ExchangeButton';
 import { POLLING_INTERVAL_MS } from '../constants';
 import { CurrencyExchange, CurrencyExchangeViewProps } from '../molecules/CurrencyExchange';
@@ -65,6 +66,7 @@ const handleAmountChange = (
   operationType: OperationType,
   conversionRate: number,
   exchangeMaxAmount: number,
+  errorStateChangeDispatcher: Dispatch<SetStateAction<string>>,
 ) => (amount: string): void => {
   const checkingAmount = amount.replace(',', '.');
   if (checkingAmount === '') {
@@ -103,8 +105,20 @@ const handleAmountChange = (
     return;
   }
 
+  if (dependedNewAmount < 0.1 || Number(checkingAmount) < 0.1) {
+    errorStateChangeDispatcher('Buying or selling amount could not be less than 0.1');
+  }
+  else {
+    errorStateChangeDispatcher('');
+  }
   changingCurrencyStateChangeDispatcher(state => ({ ...state, amountToExchange: roundToDecimals(Number(checkingAmount)) }));
   dependedCurrencyStateChangeDispatcher(state => ({ ...state, amountToExchange: dependedNewAmount }));
+};
+
+const isExchangeDisabled = (buyingState: CurrencyExchangerState, sellingState: CurrencyExchangerState): boolean => {
+  return !isNumberWithTwoDecimal(
+      buyingState.amountToExchange.toString())
+      || !isNumberWithTwoDecimal(sellingState.amountToExchange.toString());
 };
 
 export const MoneyExchanger = React.memo(() => {
@@ -142,6 +156,8 @@ export const MoneyExchanger = React.memo(() => {
 
   const [tabsState, setTabsState] = useState<TabsState>(initialTabsState);
 
+  const [errorState, setErrorState] = useState<string>('');
+
   const buyExchangeRate = roundToDecimals(
       getExchangeRate(
         exchangeRateToBaseCurrency[tabsState.sellingCurrency],
@@ -164,6 +180,7 @@ export const MoneyExchanger = React.memo(() => {
     OperationType.SELL,
     sellExchangeRate,
     userWalletsBalance[tabsState.sellingCurrency],
+    setErrorState,
   );
 
   const buyingAmountChangeHandler = handleAmountChange(
@@ -172,17 +189,18 @@ export const MoneyExchanger = React.memo(() => {
     OperationType.BUY,
     buyExchangeRate,
     userWalletsBalance[tabsState.sellingCurrency],
+    setErrorState,
   );
 
   if (userWalletCurrencies.length < 2) {
-    return <div> Not enough wallets for exchange </div>
+    return <div id='no-wallets'>Not enough wallets for exchange</div>
   }
 
   if (
     !exchangeRateToBaseCurrency[userWalletCurrencies[0]]
     || !exchangeRateToBaseCurrency[userWalletCurrencies[1]]
   ) {
-    return <div>Couldn't get exchange rates for exchange</div>
+    return <div id='no-currency'>Couldn't get exchange rates for exchange</div>
   }
 
 
@@ -214,7 +232,13 @@ export const MoneyExchanger = React.memo(() => {
   return (
     <MoneyExchangerContainer>
       <ButtonsRow>
-        <ExchangeButton onClick={makeExchange}>EXCHANGE</ExchangeButton>
+        <ExchangeButton
+            disabled={Boolean(errorState) || isExchangeDisabled(buyExchangerState, sellExchangerState)}
+            onClick={makeExchange}
+        >
+          EXCHANGE
+        </ExchangeButton>
+        {Boolean(errorState) && <ErrorDiv>{errorState}</ErrorDiv>}
       </ButtonsRow>
       <ExchangersContainer>
         <CurrencyExchange
