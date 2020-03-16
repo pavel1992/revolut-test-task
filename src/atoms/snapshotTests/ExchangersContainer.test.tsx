@@ -2,12 +2,11 @@ import 'jest-styled-components';
 import * as React from 'react';
 import renderer from 'react-test-renderer';
 
-import { InputHelper } from './InputHelper';
+import { ExchangersContainer } from '../ExchangersContainer';
 
-
-test('renders InputHelper correctly', () => {
+test('renders ExchangersContainer correctly', () => {
   const render = renderer
-    .create(<InputHelper>111</InputHelper>)
+    .create(<ExchangersContainer>111</ExchangersContainer>)
     .toJSON();
   expect(render).toMatchSnapshot();
 });

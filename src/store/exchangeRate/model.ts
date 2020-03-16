@@ -5,9 +5,9 @@ export interface ExchangeRateModel {
 }
 
 export interface ExchangeRateResponse {
-  "disclaimer": string;
-  "license": string;
-  "timestamp": number,
-  "base": string,
-  "rates": Record<string, number>
+  disclaimer: string;
+  license: string;
+  timestamp: number,
+  base: string,
+  rates: Record<string, number>
 }

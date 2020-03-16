@@ -1,12 +1,11 @@
 import React from 'react';
-import styled from 'styled-components';
 
 import { Caption } from '../atoms/Caption';
 import { CurrencyContainer, CurrencyContainerProps } from '../atoms/CurrencyContainer';
 import { Input } from '../atoms/Input';
 import { InputHelper } from '../atoms/InputHelper';
+import { InputWithInfoContainer } from '../atoms/InputWithInfoContainer';
 import { CURRENCY_SIGNS } from '../constants';
-import { TABLET_BREAKPOINT } from '../styleConstants/mediaConstants';
 
 import { CurrencyTabs, CurrencyTabsProps } from './CurrencyTabs';
 
@@ -21,14 +20,6 @@ export interface CurrencyExchangeViewProps {
 export interface CurrencyExchangeProps extends CurrencyContainerProps, CurrencyExchangeViewProps, CurrencyTabsProps {
   onAmountChange: (value: string) => void;
 }
-
-const InputWithInfoContainer = styled.div`
-  margin-top: 30px;
-
-  @media(max-width: ${TABLET_BREAKPOINT}) {
-    margin-top: 0;
-  }
-`;
 
 const getCurrencyHelperText = (
   {sellingCurrency, buyingCurrency, exchangeRate, isFromCurrency}: CurrencyExchangeProps,

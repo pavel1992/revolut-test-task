@@ -2,12 +2,12 @@ import 'jest-styled-components';
 import * as React from 'react';
 import renderer from 'react-test-renderer';
 
-import { ExchangeButton } from './ExchangeButton';
+import { InputHelper } from '../InputHelper';
 
 
-test('renders ExchangeButton correctly', () => {
+test('renders InputHelper correctly', () => {
   const render = renderer
-    .create(<ExchangeButton>111</ExchangeButton>)
+    .create(<InputHelper>111</InputHelper>)
     .toJSON();
   expect(render).toMatchSnapshot();
 });

@@ -2,12 +2,12 @@ import 'jest-styled-components';
 import * as React from 'react';
 import renderer from 'react-test-renderer';
 
-import { CurrencyContainer } from "./CurrencyContainer";
+import { AppContainer } from "../AppСontainer";
 
 
-test('renders currency container correctly', () => {
+test('renders app container correctly', () => {
   const render = renderer
-    .create(<CurrencyContainer/>)
+    .create(<AppContainer/>)
     .toJSON();
   expect(render).toMatchSnapshot();
 });

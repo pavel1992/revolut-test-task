@@ -1,15 +1,16 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import styled from 'styled-components';
 
+import { ButtonsRow } from '../atoms/ButtonsRow';
 import { ErrorDiv } from '../atoms/ErrorDiv';
 import { ExchangeButton } from '../atoms/ExchangeButton';
+import { ExchangersContainer } from '../atoms/ExchangersContainer';
+import { MoneyExchangerContainer } from '../atoms/MoneyExchangerContainer';
 import { POLLING_INTERVAL_MS } from '../constants';
 import { CurrencyExchange, CurrencyExchangeViewProps } from '../molecules/CurrencyExchange';
 import { fetchExchangeRateAction } from '../store/exchangeRate/actions';
 import { StoreState } from '../store/store';
 import { exchangeMoneyAction } from '../store/userWallets/actions';
-import { SMALL_DESKTOP_BREAKPOINT, TABLET_BREAKPOINT } from '../styleConstants/mediaConstants';
 import { getExchangeRate } from '../utils/getExchangeRate';
 import { isNumberWithTwoDecimal } from '../utils/isNumberWithTwoDecimal';
 import { roundToDecimals } from '../utils/roundToDecimals';
@@ -25,41 +26,6 @@ enum OperationType {
   BUY = 'BUY',
   SELL = 'SELL',
 }
-
-const MoneyExchangerContainer = styled.div`
-  width: 1160px;
-  display: flex;
-  flex-direction: column;
-
-  @media(max-width: ${SMALL_DESKTOP_BREAKPOINT}) {
-    width: 100%;
-    padding: 0 60px;
-  }
-
-  @media(max-width: ${TABLET_BREAKPOINT}) {
-    padding: 0;
-  }
-`;
-
-const ButtonsRow = styled.div`
-  display: flex;
-  flex-direction: row-reverse;
-  margin: 24px 0;
-
-  @media(max-width: ${TABLET_BREAKPOINT}) {
-    margin-bottom: 0;
-  }
-`;
-
-const ExchangersContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-
-  @media(max-width: ${TABLET_BREAKPOINT}) {
-    flex-direction: column;
-  }
-`;
 
 const handleAmountChange = (
   changingCurrencyStateChangeDispatcher: Dispatch<SetStateAction<CurrencyExchangerState>>,

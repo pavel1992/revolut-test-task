@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders ButtonsRow correctly 1`] = `
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row-reverse;
+  -ms-flex-direction: row-reverse;
+  flex-direction: row-reverse;
+  margin: 24px 0;
+}
+
+@media (max-width:768px) {
+  .c0 {
+    margin-bottom: 0;
+  }
+}
+
+<div
+  className="c0"
+>
+  111
+</div>
+`;

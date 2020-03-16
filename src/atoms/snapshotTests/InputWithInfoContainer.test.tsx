@@ -2,12 +2,12 @@ import 'jest-styled-components';
 import * as React from 'react';
 import renderer from 'react-test-renderer';
 
-import { CurrencyTab } from './CurrencyTab';
+import { InputWithInfoContainer } from '../InputWithInfoContainer';
 
 
-test('renders CurrencyTab correctly', () => {
+test('renders InputWithInfoContainer correctly', () => {
   const render = renderer
-    .create(<CurrencyTab active={false}>111</CurrencyTab>)
+    .create(<InputWithInfoContainer>111</InputWithInfoContainer>)
     .toJSON();
   expect(render).toMatchSnapshot();
 });

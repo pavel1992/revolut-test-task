@@ -2,7 +2,7 @@ import 'jest-styled-components';
 import * as React from 'react';
 import renderer from 'react-test-renderer';
 
-import { ErrorDiv } from './ErrorDiv';
+import { ErrorDiv } from '../ErrorDiv';
 
 
 test('renders ErrorDiv correctly', () => {
