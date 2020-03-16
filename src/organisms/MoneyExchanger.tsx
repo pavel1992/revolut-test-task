@@ -7,15 +7,20 @@ import { ExchangeButton } from '../atoms/ExchangeButton';
 import { ExchangersContainer } from '../atoms/ExchangersContainer';
 import { MoneyExchangerContainer } from '../atoms/MoneyExchangerContainer';
 import { POLLING_INTERVAL_MS } from '../constants';
-import { CurrencyExchange, CurrencyExchangeViewProps } from '../molecules/CurrencyExchange';
+import { CurrencyExchange } from '../molecules/CurrencyExchange';
 import { fetchExchangeRateAction } from '../store/exchangeRate/actions';
 import { StoreState } from '../store/store';
 import { exchangeMoneyAction } from '../store/userWallets/actions';
 import { getExchangeRate } from '../utils/getExchangeRate';
 import { isNumberWithTwoDecimal } from '../utils/isNumberWithTwoDecimal';
 import { roundToDecimals } from '../utils/roundToDecimals';
-
-export type CurrencyExchangerState = Pick<CurrencyExchangeViewProps, 'amountToExchange'>
+import {
+  isEmptyString,
+  isFloatEndingWithZero,
+  isFloatWithoutDecimalPart,
+  isFloatWithoutIntegerPart,
+  isInvalidInput
+} from '../utils/validators';
 
 export interface TabsState {
   sellingCurrency: string;
@@ -28,50 +33,26 @@ enum OperationType {
 }
 
 const handleAmountChange = (
-  changingCurrencyStateChangeDispatcher: Dispatch<SetStateAction<CurrencyExchangerState>>,
-  dependedCurrencyStateChangeDispatcher: Dispatch<SetStateAction<CurrencyExchangerState>>,
+  changingCurrencyStateChangeDispatcher: Dispatch<SetStateAction<string | number>>,
+  dependedCurrencyStateChangeDispatcher: Dispatch<SetStateAction<string | number>>,
   operationType: OperationType,
   conversionRate: number,
   exchangeMaxAmount: number,
   errorStateChangeDispatcher: Dispatch<SetStateAction<string>>,
 ) => (amount: string): void => {
   const checkingAmount = amount.replace(',', '.');
-  if (checkingAmount === '') {
-    changingCurrencyStateChangeDispatcher(state => ({ ...state, amountToExchange: checkingAmount }));
-    return;
-  }
-
-  // checking for 2. inputs
   if (
-    checkingAmount.endsWith('.')
-    && checkingAmount.split('.').length === 2
-    && isNumberWithTwoDecimal(checkingAmount.slice(0, checkingAmount.length - 1))
+    isEmptyString(checkingAmount)
+    || isFloatWithoutDecimalPart(checkingAmount)
+    || isFloatWithoutIntegerPart(checkingAmount)
   ) {
-    changingCurrencyStateChangeDispatcher(state => ({ ...state, amountToExchange: checkingAmount }));
+    changingCurrencyStateChangeDispatcher(checkingAmount);
     return;
   }
 
-  // checking for .2
-  if (
-    checkingAmount.startsWith('.')
-    && checkingAmount.split('.').length === 2
-    && isNumberWithTwoDecimal(checkingAmount.split('.')[1])
-  ) {
-    changingCurrencyStateChangeDispatcher(state => ({ ...state, amountToExchange: checkingAmount }));
+  if (isInvalidInput(checkingAmount)) {
     return;
   }
-
-  // checking for 2.0 etc inputs
-  if (checkingAmount.split('.').length > 1 && checkingAmount.split('.')[1].length < 2 && checkingAmount.split('.')[1] === '0') {
-    changingCurrencyStateChangeDispatcher(state => ({ ...state, amountToExchange: checkingAmount }));
-    return;
-  }
-
-  // checking for non-numeric input or third decimal
-  if (!isNumberWithTwoDecimal(checkingAmount) || (checkingAmount.split('.').length > 1 && checkingAmount.split('.')[1].length > 2)) {
-    return;
-  }
-
   const dependedNewAmount = roundToDecimals(Number(checkingAmount) * conversionRate);
 
   if (operationType === OperationType.BUY && dependedNewAmount > exchangeMaxAmount ) {
@@ -88,14 +69,20 @@ const handleAmountChange = (
   else {
     errorStateChangeDispatcher('');
   }
-  changingCurrencyStateChangeDispatcher(state => ({ ...state, amountToExchange: roundToDecimals(Number(checkingAmount)) }));
-  dependedCurrencyStateChangeDispatcher(state => ({ ...state, amountToExchange: dependedNewAmount }));
+  if (isFloatEndingWithZero(checkingAmount)) {
+    changingCurrencyStateChangeDispatcher(checkingAmount);
+    dependedCurrencyStateChangeDispatcher(dependedNewAmount);
+    return;
+  }
+
+  changingCurrencyStateChangeDispatcher(roundToDecimals(Number(checkingAmount)));
+  dependedCurrencyStateChangeDispatcher(dependedNewAmount);
 };
 
-const isExchangeDisabled = (buyingState: CurrencyExchangerState, sellingState: CurrencyExchangerState): boolean => {
+const isExchangeDisabled = (buyingState: string | number, sellingState: string | number): boolean => {
   return !isNumberWithTwoDecimal(
-    buyingState.amountToExchange.toString())
-    || !isNumberWithTwoDecimal(sellingState.amountToExchange.toString());
+    buyingState.toString())
+    || !isNumberWithTwoDecimal(sellingState.toString());
 };
 
 export const MoneyExchanger = React.memo(() => {
@@ -124,12 +111,9 @@ export const MoneyExchanger = React.memo(() => {
     sellingCurrency: userWalletCurrencies[0],
   });
 
-  const initialExchangersState: CurrencyExchangerState = ({
-    amountToExchange: '',
-  });
-  const [sellExchangerState, setSellExchangerState] = useState<CurrencyExchangerState>(initialExchangersState);
+  const [sellingAmountValueState, setSellingAmountValueStateState] = useState<string | number>('');
 
-  const [buyExchangerState, setBuyExchangerState] = useState<CurrencyExchangerState>(initialExchangersState);
+  const [buyingAmountValueState, setBuyingAmountValueStateState] = useState<string | number>('');
 
   const [tabsState, setTabsState] = useState<TabsState>(initialTabsState);
 
@@ -152,8 +136,8 @@ export const MoneyExchanger = React.memo(() => {
   );
 
   const sellingAmountChangeHandler = handleAmountChange(
-    setSellExchangerState,
-    setBuyExchangerState,
+    setSellingAmountValueStateState,
+    setBuyingAmountValueStateState,
     OperationType.SELL,
     sellExchangeRate,
     userWalletsBalance[tabsState.sellingCurrency],
@@ -161,8 +145,8 @@ export const MoneyExchanger = React.memo(() => {
   );
 
   const buyingAmountChangeHandler = handleAmountChange(
-    setBuyExchangerState,
-    setSellExchangerState,
+    setBuyingAmountValueStateState,
+    setSellingAmountValueStateState,
     OperationType.BUY,
     buyExchangeRate,
     userWalletsBalance[tabsState.sellingCurrency],
@@ -182,8 +166,8 @@ export const MoneyExchanger = React.memo(() => {
 
 
   const reset = () => {
-    setSellExchangerState(state => ({...state, amountToExchange: ''}));
-    setBuyExchangerState(state => ({ ...state, amountToExchange: ''}));
+    setSellingAmountValueStateState('');
+    setBuyingAmountValueStateState('');
   };
 
 
@@ -200,8 +184,8 @@ export const MoneyExchanger = React.memo(() => {
     dispatch(exchangeMoneyAction({
       sellingCurrency: tabsState.sellingCurrency,
       buyingCurrency: tabsState.buyingCurrency,
-      soldCurrencyAmount: Number(sellExchangerState.amountToExchange),
-      boughtCurrencyAmount: Number(buyExchangerState.amountToExchange),
+      soldCurrencyAmount: Number(sellingAmountValueState),
+      boughtCurrencyAmount: Number(buyingAmountValueState),
     }));
     reset();
   };
@@ -210,7 +194,7 @@ export const MoneyExchanger = React.memo(() => {
     <MoneyExchangerContainer>
       <ButtonsRow>
         <ExchangeButton
-          disabled={Boolean(errorState) || isExchangeDisabled(buyExchangerState, sellExchangerState)}
+          disabled={Boolean(errorState) || isExchangeDisabled(buyingAmountValueState, sellingAmountValueState)}
           onClick={makeExchange}
         >
           EXCHANGE
@@ -219,8 +203,8 @@ export const MoneyExchanger = React.memo(() => {
       </ButtonsRow>
       <ExchangersContainer>
         <CurrencyExchange
-          {...sellExchangerState}
           {...tabsState}
+          amountToExchange={sellingAmountValueState}
           tabNames={userWalletCurrencies}
           activeTabName={tabsState.sellingCurrency}
           onTabClick={changeSellingTab}
@@ -231,7 +215,7 @@ export const MoneyExchanger = React.memo(() => {
         />
         <CurrencyExchange
           {...tabsState}
-          {...buyExchangerState}
+          amountToExchange={buyingAmountValueState}
           tabNames={userWalletCurrencies}
           onTabClick={changeBuyingTab}
           activeTabName={tabsState.buyingCurrency}

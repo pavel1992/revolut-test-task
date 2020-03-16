@@ -71,6 +71,32 @@ test('it should correctly change selling amount when changing buying amount', ()
   expect(sellingCurrencyInput.prop('value')).toEqual(5);
 });
 
+test('it should correctly recalculate buying amount when changing selling amount from float to float number with 0 fractal', () => {
+  const mockStore = configureStore();
+
+  const store = mockStore(storeMock);
+
+  store.dispatch = jest.fn();
+
+  const wrapper = mount(
+    <Provider store={store}>
+        <MoneyExchanger/>
+    </Provider>
+  );
+  const sellingCurrencyInput = wrapper.find('input').at(0);
+  sellingCurrencyInput.getDOMNode<HTMLInputElement>().value = '2.08';
+  sellingCurrencyInput.simulate('change');
+
+  let buyingCurrencyInput = wrapper.find('input').at(1);
+  expect(buyingCurrencyInput.prop('value')).toEqual(4.16);
+
+  sellingCurrencyInput.getDOMNode<HTMLInputElement>().value = '2.0';
+  sellingCurrencyInput.simulate('change');
+
+  buyingCurrencyInput = wrapper.find('input').at(1);
+  expect(buyingCurrencyInput.prop('value')).toEqual(4);
+});
+
 test('it should correctly set initial tabs value', () => {
   const mockStore = configureStore();
 
