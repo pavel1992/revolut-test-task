@@ -75,11 +75,21 @@ const handleAmountChange = (
     return;
   }
 
-  // checking for 2. or 2, inputs
+  // checking for 2. inputs
   if (
     checkingAmount.endsWith('.')
     && checkingAmount.split('.').length === 2
     && isNumberWithTwoDecimal(checkingAmount.slice(0, checkingAmount.length - 1))
+  ) {
+    changingCurrencyStateChangeDispatcher(state => ({ ...state, amountToExchange: checkingAmount }));
+    return;
+  }
+
+  // checking for .2
+  if (
+    checkingAmount.startsWith('.')
+    && checkingAmount.split('.').length === 2
+    && isNumberWithTwoDecimal(checkingAmount.split('.')[1])
   ) {
     changingCurrencyStateChangeDispatcher(state => ({ ...state, amountToExchange: checkingAmount }));
     return;

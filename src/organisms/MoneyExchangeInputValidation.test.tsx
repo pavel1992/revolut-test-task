@@ -48,6 +48,29 @@ test('it should empty string correctly', () => {
   expect(sellingCurrencyInput.prop('value')).toEqual('');
 });
 
+test('it should set number with decimal part and without integer part correctly', () => {
+  const mockStore = configureStore();
+
+  const store = mockStore(storeMock);
+
+  store.dispatch = jest.fn();
+
+  const wrapper = mount(
+    <Provider store={store}>
+      <MoneyExchanger/>
+    </Provider>
+  );
+  let sellingCurrencyInput = wrapper.find('input').at(0);
+
+  sellingCurrencyInput.getDOMNode<HTMLInputElement>().value = '0.1';
+  sellingCurrencyInput.simulate('change');
+  sellingCurrencyInput.getDOMNode<HTMLInputElement>().value = '.1';
+  sellingCurrencyInput.simulate('change');
+
+  sellingCurrencyInput = wrapper.find('input').at(0);
+  expect(sellingCurrencyInput.prop('value')).toEqual('.1');
+});
+
 test('it should set number with dot correctly', () => {
   const mockStore = configureStore();
 
