@@ -1,8 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders InputHelper correctly 1`] = `
+.c0 {
+  font-size: 72px;
+  line-height: 98px;
+  color: #000000;
+}
+
+@media (max-width:768px) {
+  .c0 {
+    font-size: 64px;
+  }
+}
+
 <span
-  className="sc-AxjAm iiqNAN"
+  className="c0"
 >
   111
 </span>

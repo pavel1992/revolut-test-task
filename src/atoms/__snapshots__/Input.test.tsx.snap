@@ -1,7 +1,27 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders Input correctly 1`] = `
+.c0 {
+  font-size: 72px;
+  line-height: 98px;
+  color: #000000;
+  border: none;
+  max-width: 230px;
+}
+
+.c0:focus {
+  outline: none;
+}
+
+@media (max-width:768px) {
+  .c0 {
+    font-size: 64px;
+    line-height: 87px;
+    max-width: 170px;
+  }
+}
+
 <input
-  className="sc-AxjAm iKlVDU"
+  className="c0"
 />
 `;

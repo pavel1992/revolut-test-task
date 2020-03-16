@@ -1,8 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders Caption correctly 1`] = `
+.c0 {
+  color: rgba(0,0,0,0.5);
+  font-size: 14px;
+}
+
+@media (max-width:768px) {
+  .c0 {
+    font-size: 12px;
+  }
+}
+
 <div
-  className="sc-AxjAm wjbyP"
+  className="c0"
 >
   111
 </div>

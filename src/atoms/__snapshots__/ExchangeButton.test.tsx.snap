@@ -1,8 +1,30 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders ExchangeButton correctly 1`] = `
+.c0 {
+  padding: 14px 50px;
+  background-color: #F31FAD;
+  color: #FFFFFF;
+  border-radius: 24px;
+  border: none;
+  cursor: pointer;
+}
+
+.c0:focus {
+  outline: none;
+}
+
+.c0:hover {
+  background-color: #E96584;
+}
+
+.c0:disabled {
+  cursor: not-allowed;
+  background-color: rgba(0,0,0,0.3);
+}
+
 <button
-  className="sc-AxjAm hBDLuT"
+  className="c0"
 >
   111
 </button>

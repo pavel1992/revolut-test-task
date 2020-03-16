@@ -1,8 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders ErrorDiv correctly 1`] = `
+.c0 {
+  margin: auto 10px;
+  color: #FF1F1F;
+}
+
 <div
-  className="sc-AxjAm iXYMhm"
+  className="c0"
 >
   111
 </div>

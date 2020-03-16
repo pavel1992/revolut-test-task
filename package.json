@@ -15,6 +15,7 @@
     "@types/react-test-renderer": "^16.9.2",
     "@types/styled-components": "^5.0.1",
     "enzyme-adapter-react-16": "^1.15.2",
+    "jest-styled-components": "^7.0.0",
     "lodash": "^4.17.15",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",

@@ -1,8 +1,27 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders CurrencyTab correctly 1`] = `
+.c0 {
+  line-height: 25px;
+  cursor: pointer;
+  padding-bottom: 10px;
+  color: rgba(0,0,0,0.3);
+  border-bottom: 2px solid transparent;
+  margin-right: 24px;
+}
+
+@media (max-width:768px) {
+  .c0 {
+    padding: 8px 0 8px 8px;
+    margin-right: 0;
+    margin-bottom: 4px;
+    border-bottom: 0;
+    border-left: 2px solid transparent;
+  }
+}
+
 <div
-  className="sc-AxjAm ioRucc"
+  className="c0"
 >
   111
 </div>
