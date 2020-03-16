@@ -31,3 +31,10 @@ which provides type-safely action creators even for async actions, and reducers.
 #### Things to improve / TODO
 Add user wallets management(creating/deleting). It could be easily done because of user wallets reducer model.
 Make real pages for no wallets/no currencies scenarios.
+
+
+#### Input restrictions
+1. User can't start input from `.` or `,`.It is easy to support, but I don't think it is necessary.
+2. User can not buy or sell less than 0.1 in currency. It's used to avoid exchange bug with loosing precision in cause of
+rounding to 2 decimal numbers. For example, if we have exchange rate 1GBP = 1.1USD, than 0.01GBP = 0.011 USD, which will be
+rounded to 0.01 USD, so user will loose cents on every exchange.
